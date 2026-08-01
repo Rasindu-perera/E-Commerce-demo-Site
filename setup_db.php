@@ -1,21 +1,21 @@
 <?php
 // 1. Database Connection Settings
 $host = 'sql211.infinityfree.com';
-$user = 'if0_42550509'; // ඔයාගේ db username එක
-$pass = 'JLJ0Hue22Z';     // ඔයාගේ db password එක
+$user = 'if0_42550509'; // Your db username
+$pass = 'JLJ0Hue22Z';     // Your db password
 $charset = 'utf8mb4';
 
 try {
-    // MySQL server එකට connect වීම (Database එක නැත්නම් අලුතින් හදන්න)
+    // Connect to MySQL server (Create database if it doesn't exist)
     $pdo = new PDO("mysql:host=$host;charset=$charset", $user, $pass);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    // Database එක හැදීම
+    // Select Database
     $pdo->exec("USE if0_42550509_ecommerce_analytics");
 
     echo "Database created/selected successfully.<br>";
 
-    // 2. Tables නිර්මාණය කිරීම (SQL Schema)
+    // 2. Create Tables (SQL Schema)
     $sql = "
     CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -30,8 +30,11 @@ try {
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100),
         category VARCHAR(50),
+        image_path VARCHAR(255) DEFAULT NULL,
+        description TEXT,
         cost_price DECIMAL(10,2),
-        selling_price DECIMAL(10,2)
+        selling_price DECIMAL(10,2),
+        discount_percentage INT DEFAULT 0
     );
 
     CREATE TABLE IF NOT EXISTS orders (
@@ -52,16 +55,27 @@ try {
         FOREIGN KEY (order_id) REFERENCES orders(id),
         FOREIGN KEY (product_id) REFERENCES products(id)
     );
+
+    CREATE TABLE IF NOT EXISTS reviews (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        product_id INT,
+        user_id INT,
+        rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+        review_text TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
     ";
 
     $pdo->exec($sql);
     echo "Tables created successfully.<br>";
 
-    // 3. Dummy Data Generation ආරම්භය
-    // කාර්යක්ෂමතාව වැඩි කරන්න Transaction එකක් පාවිච්චි කරනවා
+    // 3. Start Dummy Data Generation
+    // Use a transaction for better performance
     $pdo->beginTransaction();
 
-    // -- Users 50ක් හැදීම --
+    // -- Create 50 Users --
     $firstNames = ['Kasun', 'Amila', 'Nimal', 'Sunil', 'Kamal', 'Ruwan', 'Saman', 'Nuwan', 'Dasun', 'Lahiru'];
     $lastNames = ['Perera', 'Silva', 'Fernando', 'De Silva', 'Kumara', 'Bandara', 'Rathnayake', 'Jayasooriya'];
 
@@ -70,12 +84,12 @@ try {
         $fname = $firstNames[array_rand($firstNames)];
         $lname = $lastNames[array_rand($lastNames)];
         $email = strtolower($fname . "." . $lname . $i . "@example.com");
-        // පහුගිය අවුරුදු 2 ඇතුළත random date එකක්
+        // Random date within the last 2 years
         $regDate = date('Y-m-d H:i:s', strtotime('-' . rand(1, 730) . ' days'));
         $stmtUser->execute([$fname, $lname, $email, $regDate]);
     }
 
-    // -- Products 20ක් හැදීම (Electronics Theme) --
+    // -- Create 20 Products (Electronics Theme) --
     $categories = ['Smartphones', 'Laptops', 'Accessories', 'Audio'];
     $stmtProd = $pdo->prepare("INSERT INTO products (name, category, cost_price, selling_price) VALUES (?, ?, ?, ?)");
 
@@ -86,28 +100,28 @@ try {
         $stmtProd->execute(["Smart Product " . $i, $category, $cost, $sell]);
     }
 
-    // -- Orders 1000ක් සහ Order Items හැදීම --
+    // -- Create 1000 Orders and Order Items --
     $stmtOrder = $pdo->prepare("INSERT INTO orders (user_id, order_date, status) VALUES (?, ?, ?)");
     $stmtItem = $pdo->prepare("INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)");
     $stmtUpdateOrder = $pdo->prepare("UPDATE orders SET total_amount = ? WHERE id = ?");
 
-    $statuses = ['Completed', 'Completed', 'Completed', 'Pending', 'Cancelled']; // Completed වෙන chance එක වැඩියි
+    $statuses = ['Completed', 'Completed', 'Completed', 'Pending', 'Cancelled']; // Higher chance for 'Completed'
 
     for ($i = 1; $i <= 1000; $i++) {
         $userId = rand(1, 50);
-        $orderDate = date('Y-m-d H:i:s', strtotime('-' . rand(1, 365) . ' days')); // පහුගිය අවුරුද්ද ඇතුළත
+        $orderDate = date('Y-m-d H:i:s', strtotime('-' . rand(1, 365) . ' days')); // Within the last year
         $status = $statuses[array_rand($statuses)];
 
         $stmtOrder->execute([$userId, $orderDate, $status]);
         $orderId = $pdo->lastInsertId();
 
-        $itemCount = rand(1, 4); // එක order එකක products 1 ත් 4 ත් අතර
+        $itemCount = rand(1, 4); // 1 to 4 products per order
         $orderTotal = 0;
 
         for ($j = 0; $j < $itemCount; $j++) {
             $productId = rand(1, 20);
 
-            // Product එකේ price එක ගන්නවා
+            // Get product price
             $prodQ = $pdo->query("SELECT selling_price FROM products WHERE id = $productId");
             $price = $prodQ->fetchColumn();
 
@@ -117,7 +131,7 @@ try {
             $stmtItem->execute([$orderId, $productId, $qty, $price]);
         }
 
-        // Order එකේ සම්පූර්ණ ගාණ update කරනවා
+        // Update total order amount
         $stmtUpdateOrder->execute([$orderTotal, $orderId]);
     }
 

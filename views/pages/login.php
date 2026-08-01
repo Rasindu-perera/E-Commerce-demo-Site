@@ -95,6 +95,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
 
+            <div class="bg-blue-50 text-blue-800 p-4 rounded-lg text-sm mb-6 border border-blue-200 text-left">
+                <p class="font-semibold mb-1">Demo Admin Access</p>
+                <p>Email: <strong>admin@gmail.com</strong></p>
+                <p>Password: <strong>admin1234</strong></p>
+                <p class="text-rose-600 font-semibold mt-1 text-xs">⚠️ Please do not change the admin password!</p>
+            </div>
+
             <form method="POST" action="" class="space-y-4">
                 <div>
                     <label class="block text-sm font-medium text-slate-700 mb-1" for="email">Email Address</label>
