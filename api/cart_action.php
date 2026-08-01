@@ -15,6 +15,11 @@ if (!$data || !isset($data['action'])) {
     exit;
 }
 
+if (!isset($_SESSION['user_id']) && in_array($data['action'], ['add', 'update', 'remove', 'clear'])) {
+    echo json_encode(['success' => false, 'require_login' => true, 'message' => 'Please log in to manage your cart']);
+    exit;
+}
+
 $action = $data['action'];
 $productId = isset($data['product_id']) ? (int)$data['product_id'] : 0;
 $quantity = isset($data['quantity']) ? (int)$data['quantity'] : 1;

@@ -310,6 +310,14 @@ $total = $subtotal + $tax;
                         quantity: newQty
                     })
                 });
+                
+                const data = await response.json();
+                if (data.require_login) {
+                    alert(data.message);
+                    window.location.href = 'login.php';
+                    return;
+                }
+                
                 updateCartBadge();
             } catch (error) {
                 console.error("Error updating cart:", error);
@@ -325,7 +333,7 @@ $total = $subtotal + $tax;
             itemElement.style.pointerEvents = 'none';
 
             try {
-                await fetch('api/cart_action.php', {
+                const response = await fetch('api/cart_action.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -333,6 +341,13 @@ $total = $subtotal + $tax;
                         product_id: productId
                     })
                 });
+                
+                const data = await response.json();
+                if (data.require_login) {
+                    alert(data.message);
+                    window.location.href = 'login.php';
+                    return;
+                }
                 
                 itemElement.remove();
                 recalculateSummary();

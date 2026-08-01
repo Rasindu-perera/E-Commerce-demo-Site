@@ -32,6 +32,12 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(response => response.json())
             .then(data => {
+                if (data.require_login) {
+                    alert(data.message);
+                    window.location.href = 'login.php';
+                    return;
+                }
+                
                 if (data.success) {
                     // Update cart count badge
                     if (cartBadge) {
