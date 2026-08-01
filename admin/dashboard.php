@@ -105,14 +105,14 @@
                     <i class="fa-regular fa-bell text-xl"></i>
                     <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-rose-500 border-2 border-slate-900 rounded-full"></span>
                 </button>
-                <div class="flex items-center space-x-3 pl-4 border-l border-slate-700/50 cursor-pointer group">
+                <a href="../profile.php" class="flex items-center space-x-3 pl-4 border-l border-slate-700/50 cursor-pointer group">
                     <img src="https://ui-avatars.com/api/?name=Admin&background=6366f1&color=fff" alt="Admin" class="w-9 h-9 rounded-full ring-2 ring-transparent group-hover:ring-indigo-500/50 transition-all">
                     <div class="hidden sm:block">
                         <p class="text-sm font-medium text-white leading-none mb-1">Admin</p>
                         <p class="text-xs text-slate-400 leading-none">Superuser</p>
                     </div>
                     <i class="fa-solid fa-chevron-down text-slate-500 text-xs ml-2"></i>
-                </div>
+                </a>
             </div>
         </header>
 

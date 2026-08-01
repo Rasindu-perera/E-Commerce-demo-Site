@@ -88,7 +88,7 @@ $total = $subtotal + $tax;
                         </div>
                     <?php else: ?>
                         <div class="hidden sm:flex items-center space-x-4 border-r border-slate-700/50 pr-4">
-                            <span class="text-slate-300 text-sm">Hi, <span class="font-semibold text-white"><?= htmlspecialchars($_SESSION['first_name'] ?? 'User') ?></span></span>
+                            <a href="profile.php" class="text-slate-300 text-sm hover:text-indigo-400 transition-colors">Hi, <span class="font-semibold text-white"><?= htmlspecialchars($_SESSION['first_name'] ?? 'User') ?></span></a>
                             <a href="logout.php" class="text-slate-400 hover:text-rose-400 transition-colors" title="Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
                         </div>
                     <?php endif; ?>
