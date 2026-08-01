@@ -47,7 +47,7 @@ ob_start();
             <h2 class="text-3xl font-bold text-white mb-1">Reports & Analytics</h2>
             <p class="text-slate-400 text-sm">Detailed breakdown of your store's performance.</p>
         </div>
-        <button class="btn-gradient bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium px-5 py-2.5 rounded-lg shadow-lg shadow-indigo-500/25 flex items-center space-x-2 transition-transform hover:-translate-y-0.5">
+        <button id="exportPdfBtn" class="btn-gradient bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-medium px-5 py-2.5 rounded-lg shadow-lg shadow-indigo-500/25 flex items-center space-x-2 transition-transform hover:-translate-y-0.5">
             <i class="fa-solid fa-file-pdf text-sm"></i>
             <span>Export to PDF</span>
         </button>
@@ -152,6 +152,67 @@ ob_start();
 
     </div>
 </div>
+
+<!-- JS PDF Libraries -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+    document.getElementById('exportPdfBtn').addEventListener('click', function() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        doc.setFontSize(18);
+        doc.text("Business Analytics Report", 14, 22);
+        doc.setFontSize(11);
+        doc.text("Generated on: " + new Date().toLocaleString(), 14, 30);
+        
+        // Add Category Sales Table
+        doc.setFontSize(14);
+        doc.text("Sales by Category", 14, 45);
+        
+        const categoryData = [];
+        const catRows = document.querySelectorAll('.glass-panel:nth-child(1) tbody tr');
+        catRows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if(cells.length === 3) {
+                categoryData.push([cells[0].innerText, cells[1].innerText, cells[2].innerText]);
+            }
+        });
+        
+        doc.autoTable({
+            startY: 50,
+            head: [['Category', 'Items Sold', 'Revenue']],
+            body: categoryData,
+            theme: 'grid',
+            headStyles: { fillColor: [99, 102, 241] }
+        });
+        
+        // Add Monthly Breakdown Table
+        let currentY = doc.lastAutoTable.finalY + 15;
+        doc.setFontSize(14);
+        doc.text("Monthly Breakdown (Last 12 Months)", 14, currentY);
+        
+        const monthlyData = [];
+        const monthRows = document.querySelectorAll('.glass-panel:nth-child(2) tbody tr');
+        monthRows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if(cells.length === 3) {
+                monthlyData.push([cells[0].innerText, cells[1].innerText, cells[2].innerText]);
+            }
+        });
+        
+        doc.autoTable({
+            startY: currentY + 5,
+            head: [['Month', 'Orders', 'Revenue']],
+            body: monthlyData,
+            theme: 'grid',
+            headStyles: { fillColor: [16, 185, 129] } // Emerald 500
+        });
+        
+        doc.save("business_report.pdf");
+    });
+</script>
 
 <?php
 $content = ob_get_clean();
