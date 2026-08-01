@@ -75,3 +75,49 @@ document.addEventListener('DOMContentLoaded', () => {
         .catch(error => console.error('Error fetching cart:', error));
     }
 });
+
+// Global functions for cart page buttons
+window.removeCartItem = function(productId) {
+    fetch('api/cart_action.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'remove', product_id: productId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else if (data.require_login) {
+            window.location.href = 'login.php';
+        }
+    })
+    .catch(err => console.error(err));
+};
+
+window.updateQuantity = function(productId, change, price) {
+    const qtySpan = document.querySelector(`.item-qty-${productId}`);
+    if (!qtySpan) return;
+    
+    let currentQty = parseInt(qtySpan.textContent);
+    let newQty = currentQty + change;
+    
+    if (newQty < 1) {
+        window.removeCartItem(productId);
+        return;
+    }
+    
+    fetch('api/cart_action.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'update', product_id: productId, quantity: newQty, price: price })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else if (data.require_login) {
+            window.location.href = 'login.php';
+        }
+    })
+    .catch(err => console.error(err));
+};
