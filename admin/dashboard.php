@@ -306,11 +306,21 @@ ob_start();
                     } else {
                         console.error("API Error:", response.message);
                         alert("Failed to load analytics data: " + response.message);
+                        const loader = document.getElementById('loading-indicator');
+                        if (loader) {
+                            loader.style.opacity = '0';
+                            setTimeout(() => loader.style.display = 'none', 500);
+                        }
                     }
                 })
                 .catch(err => {
                     console.error("Fetch Error:", err);
                     alert("Network error occurred while fetching analytics.");
+                    const loader = document.getElementById('loading-indicator');
+                    if (loader) {
+                        loader.style.opacity = '0';
+                        setTimeout(() => loader.style.display = 'none', 500);
+                    }
                 });
         });
     </script>
