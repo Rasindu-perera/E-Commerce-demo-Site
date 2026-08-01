@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['first_name'] = $user['first_name'];
             
             // Check for admin
-            if (strtolower($email) === 'admin@ecommerce.com') {
+            if (strtolower($email) === 'admin@gmail.com') {
                 $_SESSION['is_admin'] = true;
                 header("Location: admin/dashboard.php");
                 exit;

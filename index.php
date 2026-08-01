@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once 'config/db.php';
 
 try {
@@ -62,6 +63,11 @@ try {
                     <button class="text-slate-400 hover:text-white transition-colors relative">
                         <i class="fa-solid fa-search text-lg"></i>
                     </button>
+                    <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true): ?>
+                        <a href="admin/dashboard.php" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-lg shadow-indigo-500/20 flex items-center">
+                            <i class="fa-solid fa-chart-line mr-2"></i> Admin Dashboard
+                        </a>
+                    <?php endif; ?>
                     <a href="checkout.php" class="relative group block">
                         <div class="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-700 border border-slate-700/50 rounded-full px-5 py-2.5 transition-all group-hover:border-indigo-500/50 shadow-sm">
                             <i class="fa-solid fa-cart-shopping text-slate-300 group-hover:text-white transition-colors"></i>
