@@ -69,17 +69,10 @@ $total = $subtotal + $tax;
                             Products
                             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 rounded-full transition-all group-hover:w-full"></span>
                         </a>
-                        <a href="products.php" class="text-slate-400 hover:text-white transition-colors relative group px-1 py-2 text-sm font-medium">
-                            Categories
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 rounded-full transition-all group-hover:w-full"></span>
-                        </a>
                     </div>
                 </div>
 
                 <div class="flex items-center space-x-6">
-                    <button class="text-slate-400 hover:text-white transition-colors relative">
-                        <i class="fa-solid fa-search text-lg"></i>
-                    </button>
                     
                     <?php if (!isset($_SESSION['user_id'])): ?>
                         <div class="hidden sm:flex items-center space-x-4">

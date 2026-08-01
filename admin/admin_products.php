@@ -8,12 +8,14 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
     exit;
 }
 
-// Auto-migrate: ensure image_path exists in products
+// Auto-migrate: ensure image_path and discount_percentage exist in products
 try {
     $pdo->exec("ALTER TABLE products ADD COLUMN image_path VARCHAR(255) DEFAULT NULL AFTER category");
-} catch (PDOException $e) {
-    // Column likely already exists
-}
+} catch (PDOException $e) {}
+
+try {
+    $pdo->exec("ALTER TABLE products ADD COLUMN discount_percentage INT DEFAULT 0 AFTER selling_price");
+} catch (PDOException $e) {}
 
 $successMsg = '';
 $errorMsg = '';
@@ -104,6 +106,7 @@ ob_start();
                         <th class="py-4 px-6 font-semibold">Category</th>
                         <th class="py-4 px-6 font-semibold text-right">Cost Price</th>
                         <th class="py-4 px-6 font-semibold text-right">Selling Price</th>
+                        <th class="py-4 px-6 font-semibold text-right">Discount</th>
                         <th class="py-4 px-6 font-semibold text-center">Actions</th>
                     </tr>
                 </thead>
@@ -141,6 +144,9 @@ ob_start();
                             <td class="py-3 px-6 text-right text-emerald-400 font-bold">
                                 $<?= number_format($product['selling_price'], 2) ?>
                             </td>
+                            <td class="py-3 px-6 text-right text-rose-400 font-bold">
+                                <?= $product['discount_percentage'] ?? 0 ?>%
+                            </td>
                             <td class="py-3 px-6">
                                 <div class="flex items-center justify-center space-x-2">
                                     <button onclick="openProductModal(<?= htmlspecialchars(json_encode([
@@ -149,6 +155,7 @@ ob_start();
                                         'category' => $product['category'],
                                         'cost_price' => $product['cost_price'],
                                         'selling_price' => $product['selling_price'],
+                                        'discount_percentage' => $product['discount_percentage'] ?? 0,
                                         'image_path' => $product['image_path']
                                     ])) ?>)" class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500 hover:text-white transition-colors flex items-center justify-center" title="Edit">
                                         <i class="fa-solid fa-pen text-xs"></i>
@@ -209,7 +216,7 @@ ob_start();
                     </select>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-3 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Cost Price ($)</label>
                         <input type="number" step="0.01" id="costPrice" name="cost_price" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500">
@@ -217,6 +224,10 @@ ob_start();
                     <div>
                         <label class="block text-sm font-medium text-slate-400 mb-1">Selling Price ($)</label>
                         <input type="number" step="0.01" id="sellingPrice" name="selling_price" required class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-400 mb-1">Discount (%)</label>
+                        <input type="number" min="0" max="100" id="discountPercentage" name="discount_percentage" required value="0" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500">
                     </div>
                 </div>
 
@@ -273,11 +284,13 @@ ob_start();
             document.getElementById('productCategory').value = product.category;
             document.getElementById('costPrice').value = product.cost_price;
             document.getElementById('sellingPrice').value = product.selling_price;
+            document.getElementById('discountPercentage').value = product.discount_percentage;
             document.getElementById('existingImage').value = product.image_path || '';
         } else {
             document.getElementById('modalTitle').innerText = "Add New Product";
             document.getElementById('productForm').reset();
             document.getElementById('productId').value = "0";
+            document.getElementById('discountPercentage').value = "0";
             document.getElementById('existingImage').value = "";
         }
         modal.classList.remove('hidden');

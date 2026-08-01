@@ -4,6 +4,8 @@ require_once 'config/db.php';
 
 $search = $_GET['search'] ?? '';
 $category = $_GET['category'] ?? '';
+$sort = $_GET['sort'] ?? 'latest';
+$offer = isset($_GET['offer']) && $_GET['offer'] === 'true';
 
 // Build the query
 $query = "SELECT * FROM products WHERE 1=1";
@@ -19,7 +21,17 @@ if ($category !== '') {
     $params[] = $category;
 }
 
-$query .= " ORDER BY id DESC";
+if ($offer) {
+    $query .= " AND discount_percentage > 0";
+}
+
+if ($sort === 'price_asc') {
+    $query .= " ORDER BY (selling_price - (selling_price * COALESCE(discount_percentage, 0) / 100)) ASC";
+} elseif ($sort === 'price_desc') {
+    $query .= " ORDER BY (selling_price - (selling_price * COALESCE(discount_percentage, 0) / 100)) DESC";
+} else {
+    $query .= " ORDER BY id DESC";
+}
 
 try {
     $stmt = $pdo->prepare($query);
@@ -30,8 +42,8 @@ try {
     $catStmt = $pdo->query("SELECT DISTINCT category FROM products");
     $categories = $catStmt->fetchAll(PDO::FETCH_COLUMN);
     
-    // Fetch 3 random products for 'Special Offers' with a mock 20% discount
-    $offerStmt = $pdo->query("SELECT * FROM products ORDER BY RAND() LIMIT 3");
+    // Fetch products for 'Special Offers' that actually have a discount
+    $offerStmt = $pdo->query("SELECT * FROM products WHERE discount_percentage > 0 ORDER BY RAND() LIMIT 3");
     $specialOffers = $offerStmt->fetchAll();
     
 } catch (PDOException $e) {
@@ -81,17 +93,10 @@ try {
                             Products
                             <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-indigo-500 rounded-full"></span>
                         </a>
-                        <a href="products.php" class="text-slate-400 hover:text-white transition-colors relative group px-1 py-2 text-sm font-medium">
-                            Categories
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 rounded-full transition-all group-hover:w-full"></span>
-                        </a>
                     </div>
                 </div>
 
                 <div class="flex items-center space-x-6">
-                    <button class="text-slate-400 hover:text-white transition-colors relative">
-                        <i class="fa-solid fa-search text-lg"></i>
-                    </button>
                     
                     <?php if (!isset($_SESSION['user_id'])): ?>
                         <div class="hidden sm:flex items-center space-x-4">
@@ -168,20 +173,29 @@ try {
                     <i class="fa-solid fa-fire text-rose-500 mr-2"></i> Special Offers
                 </h3>
                 <div class="space-y-4">
-                    <?php foreach ($specialOffers as $offer): ?>
-                    <div class="flex items-center space-x-3 group cursor-pointer">
-                        <div class="w-12 h-12 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0">
-                            <img src="https://picsum.photos/seed/<?= $offer['id'] ?>/100/100" alt="<?= htmlspecialchars($offer['name']) ?>" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-medium text-white line-clamp-1 group-hover:text-indigo-300 transition-colors"><?= htmlspecialchars($offer['name']) ?></h4>
-                            <div class="flex items-center space-x-2 mt-0.5">
-                                <span class="text-xs font-bold text-rose-400">$<?= number_format($offer['selling_price'] * 0.8, 2) ?></span>
-                                <span class="text-[10px] text-slate-500 line-through">$<?= number_format($offer['selling_price'], 2) ?></span>
+                        <?php foreach ($specialOffers as $offerItem): 
+                            $originalPrice = (float)$offerItem['selling_price'];
+                            $discount = (int)($offerItem['discount_percentage'] ?? 0);
+                            $newPrice = $originalPrice - ($originalPrice * $discount / 100);
+                        ?>
+                        <div class="group cursor-pointer" onclick="window.location.href='products.php?search=<?= urlencode($offerItem['name']) ?>'">
+                            <div class="h-32 bg-slate-800 rounded-xl mb-3 overflow-hidden relative border border-slate-700/50 group-hover:border-indigo-500/50 transition-colors p-4 flex items-center justify-center">
+                                <?php if(!empty($offerItem['image_path'])): ?>
+                                    <img src="<?= htmlspecialchars($offerItem['image_path']) ?>" alt="Offer" class="max-h-full drop-shadow-lg group-hover:scale-110 transition-transform duration-500">
+                                <?php else: ?>
+                                    <img src="https://picsum.photos/seed/<?= $offerItem['id'] ?>/200/200" alt="Offer" class="max-h-full drop-shadow-lg group-hover:scale-110 transition-transform duration-500">
+                                <?php endif; ?>
+                                <div class="absolute top-2 right-2 bg-rose-500 text-white text-[10px] font-bold px-2 py-1 rounded-md shadow-lg">
+                                    -<?= $discount ?>%
+                                </div>
+                            </div>
+                            <h5 class="text-sm font-medium text-white line-clamp-1 group-hover:text-indigo-400 transition-colors"><?= htmlspecialchars($offerItem['name']) ?></h5>
+                            <div class="flex items-center space-x-2 mt-1">
+                                <span class="text-xs text-slate-500 line-through">$<?= number_format($originalPrice, 2) ?></span>
+                                <span class="text-sm font-bold text-emerald-400">$<?= number_format($newPrice, 2) ?></span>
                             </div>
                         </div>
-                    </div>
-                    <?php endforeach; ?>
+                        <?php endforeach; ?>
                 </div>
             </div>
         </aside>
@@ -191,15 +205,17 @@ try {
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
                 <div>
                     <h2 class="text-3xl font-bold text-white mb-2">Our Collection</h2>
-                    <p class="text-slate-400">
-                        <?php if ($search !== ''): ?>
-                            Showing results for "<?= htmlspecialchars($search) ?>"
-                        <?php elseif ($category !== ''): ?>
-                            Browsing <?= htmlspecialchars($category) ?>
-                        <?php else: ?>
-                            Explore all our premium devices
-                        <?php endif; ?>
-                    </p>
+                    <h4 class="text-white font-semibold mb-4">Sort By</h4>
+                    <form method="GET" action="products.php" id="sortForm">
+                        <?php if ($search): ?><input type="hidden" name="search" value="<?= htmlspecialchars($search) ?>"><?php endif; ?>
+                        <?php if ($category): ?><input type="hidden" name="category" value="<?= htmlspecialchars($category) ?>"><?php endif; ?>
+                        <?php if ($offer): ?><input type="hidden" name="offer" value="true"><?php endif; ?>
+                        <select name="sort" onchange="document.getElementById('sortForm').submit()" class="w-full bg-slate-900 border border-slate-700 text-sm text-slate-300 rounded-lg px-4 py-2 outline-none focus:border-indigo-500 transition-colors appearance-none">
+                            <option value="latest" <?= $sort === 'latest' ? 'selected' : '' ?>>Latest Additions</option>
+                            <option value="price_asc" <?= $sort === 'price_asc' ? 'selected' : '' ?>>Price: Low to High</option>
+                            <option value="price_desc" <?= $sort === 'price_desc' ? 'selected' : '' ?>>Price: High to Low</option>
+                        </select>
+                    </form>
                 </div>
             </div>
 
@@ -219,21 +235,31 @@ try {
                 </div>
             <?php else: ?>
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
-                    <?php foreach ($products as $product): ?>
+                    <?php foreach ($products as $product): 
+                        $originalPrice = (float)$product['selling_price'];
+                        $discount = (int)($product['discount_percentage'] ?? 0);
+                        $newPrice = $originalPrice - ($originalPrice * $discount / 100);
+                    ?>
                         <div class="glass-card rounded-2xl overflow-hidden flex flex-col relative group">
                             <!-- Category Badge & Wishlist -->
                             <div class="absolute top-4 left-4 right-4 z-10 flex justify-between items-start">
                                 <span class="bg-slate-900/60 backdrop-blur-md text-slate-200 text-xs font-medium px-3 py-1.5 rounded-full border border-slate-700/50">
                                     <?= htmlspecialchars($product['category']) ?>
                                 </span>
-                                <button class="w-8 h-8 rounded-full bg-slate-900/60 backdrop-blur-md flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-slate-800 transition-all border border-slate-700/50">
-                                    <i class="fa-regular fa-heart"></i>
-                                </button>
+                                <?php if ($discount > 0): ?>
+                                <span class="bg-rose-500/90 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full border border-rose-500/50">
+                                    -<?= $discount ?>%
+                                </span>
+                                <?php endif; ?>
                             </div>
                             
                             <!-- Image -->
                             <div class="image-container h-64 w-full relative bg-slate-800 flex items-center justify-center p-4">
-                                <img src="https://picsum.photos/seed/<?= $product['id'] ?>/600/600" alt="<?= htmlspecialchars($product['name']) ?>" class="max-h-full max-w-full object-contain drop-shadow-2xl">
+                                <?php if(!empty($product['image_path'])): ?>
+                                    <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="max-h-full max-w-full object-contain drop-shadow-2xl">
+                                <?php else: ?>
+                                    <img src="https://picsum.photos/seed/<?= $product['id'] ?>/600/600" alt="<?= htmlspecialchars($product['name']) ?>" class="max-h-full max-w-full object-contain drop-shadow-2xl">
+                                <?php endif; ?>
                                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-80"></div>
                             </div>
 
@@ -253,11 +279,18 @@ try {
                                 <div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-700/50">
                                     <div>
                                         <p class="text-[10px] uppercase tracking-wider text-slate-400 mb-0.5 font-medium">Price</p>
-                                        <p class="text-xl font-bold text-white flex items-baseline gap-1">
-                                            <span class="text-sm text-indigo-400">$</span><?= number_format($product['selling_price'], 2) ?>
-                                        </p>
+                                        <?php if ($discount > 0): ?>
+                                            <p class="text-[11px] text-slate-500 line-through leading-none">$<?= number_format($originalPrice, 2) ?></p>
+                                            <p class="text-xl font-bold text-emerald-400 flex items-baseline gap-1">
+                                                <span class="text-sm text-indigo-400">$</span><?= number_format($newPrice, 2) ?>
+                                            </p>
+                                        <?php else: ?>
+                                            <p class="text-xl font-bold text-white flex items-baseline gap-1 mt-3">
+                                                <span class="text-sm text-indigo-400">$</span><?= number_format($originalPrice, 2) ?>
+                                            </p>
+                                        <?php endif; ?>
                                     </div>
-                                    <button class="add-to-cart-btn btn-gradient text-white text-sm font-medium px-4 py-2 rounded-xl flex items-center space-x-2 shadow-lg shadow-indigo-500/20 group/btn" data-id="<?= $product['id'] ?>" data-price="<?= $product['selling_price'] ?>">
+                                    <button class="add-to-cart-btn btn-gradient text-white text-sm font-medium px-4 py-2 rounded-xl flex items-center space-x-2 shadow-lg shadow-indigo-500/20 group/btn mt-2" data-id="<?= $product['id'] ?>" data-price="<?= $newPrice ?>">
                                         <span>Add</span>
                                         <i class="fa-solid fa-cart-plus group-hover/btn:scale-110 transition-transform"></i>
                                     </button>

@@ -7,12 +7,12 @@ ob_start();
 ?>
         <div class="p-6 md:p-8 relative z-10 w-full max-w-7xl mx-auto">
             
-            <div class="mb-8 flex justify-between items-end">
+            <div class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h2 class="text-3xl font-bold text-white mb-1">Welcome back</h2>
                     <p class="text-slate-400 text-sm">Here's what's happening with your store today.</p>
                 </div>
-                <button class="bg-white/5 hover:bg-white/10 text-white border border-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2">
+                <button id="exportPdfBtn" class="bg-white/5 hover:bg-white/10 text-white border border-white/10 px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center space-x-2 shrink-0">
                     <i class="fa-solid fa-download text-xs"></i>
                     <span>Export Report</span>
                 </button>
@@ -138,6 +138,41 @@ ob_start();
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            
+            // Add jsPDF dynamic script loading
+            const jspdfScript = document.createElement('script');
+            jspdfScript.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+            document.head.appendChild(jspdfScript);
+
+            document.getElementById('exportPdfBtn').addEventListener('click', function() {
+                if(window.jspdf) {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    
+                    doc.setFontSize(18);
+                    doc.text("Analytics Dashboard Snapshot", 14, 22);
+                    doc.setFontSize(11);
+                    doc.text("Generated on: " + new Date().toLocaleString(), 14, 30);
+                    
+                    doc.setFontSize(14);
+                    doc.text("Overview Metrics", 14, 45);
+                    
+                    const sales = document.getElementById('metric-sales').innerText;
+                    const orders = document.getElementById('metric-orders').innerText;
+                    const topProduct = document.getElementById('metric-top-product').innerText;
+                    const topCustomer = document.getElementById('metric-top-customer').innerText;
+                    
+                    doc.setFontSize(12);
+                    doc.text(`Monthly Revenue: ${sales}`, 14, 55);
+                    doc.text(`Total Orders: ${orders}`, 14, 65);
+                    doc.text(`Top Product: ${topProduct}`, 14, 75);
+                    doc.text(`Top Customer: ${topCustomer}`, 14, 85);
+                    
+                    doc.save("dashboard_snapshot.pdf");
+                } else {
+                    alert("PDF Library is still loading. Please try again in a moment.");
+                }
+            });
             
             // Set dark theme defaults for Chart.js globally
             Chart.defaults.color = '#94a3b8';

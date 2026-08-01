@@ -52,17 +52,10 @@ try {
                             Products
                             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 rounded-full transition-all group-hover:w-full"></span>
                         </a>
-                        <a href="products.php" class="text-slate-400 hover:text-white transition-colors relative group px-1 py-2 text-sm font-medium">
-                            Categories
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 rounded-full transition-all group-hover:w-full"></span>
-                        </a>
                     </div>
                 </div>
 
                 <div class="flex items-center space-x-6">
-                    <button class="text-slate-400 hover:text-white transition-colors relative">
-                        <i class="fa-solid fa-search text-lg"></i>
-                    </button>
                     
                     <?php if (!isset($_SESSION['user_id'])): ?>
                         <div class="hidden sm:flex items-center space-x-4">
@@ -116,13 +109,13 @@ try {
                 Discover the latest premium devices tailored to elevate your digital lifestyle. Exceptional quality meets stunning design aesthetics.
             </p>
             <div class="flex justify-center space-x-4">
-                <button class="btn-gradient text-white font-medium px-8 py-3.5 rounded-full shadow-lg shadow-indigo-500/25 flex items-center space-x-2">
+                <a href="products.php" class="btn-gradient text-white font-medium px-8 py-3.5 rounded-full shadow-lg shadow-indigo-500/25 flex items-center space-x-2">
                     <span>Shop Now</span>
                     <i class="fa-solid fa-arrow-right text-sm"></i>
-                </button>
-                <button class="bg-slate-800/80 hover:bg-slate-700 text-white font-medium px-8 py-3.5 rounded-full border border-slate-700 transition-all flex items-center space-x-2">
+                </a>
+                <a href="products.php?offer=true" class="bg-slate-800/80 hover:bg-slate-700 text-white font-medium px-8 py-3.5 rounded-full border border-slate-700 transition-all flex items-center space-x-2">
                     <span>View Offers</span>
-                </button>
+                </a>
             </div>
         </div>
     </div>
@@ -134,13 +127,7 @@ try {
                 <h2 class="text-3xl font-bold text-white mb-2">Featured Products</h2>
                 <p class="text-slate-400">Explore our most popular curated selections</p>
             </div>
-            <div class="flex space-x-2">
-                <select class="bg-slate-800/80 border border-slate-700 text-sm text-slate-300 rounded-lg px-4 py-2 outline-none focus:border-indigo-500 transition-colors appearance-none pr-8 relative">
-                    <option>Latest Additions</option>
-                    <option>Price: Low to High</option>
-                    <option>Price: High to Low</option>
-                </select>
-            </div>
+            <!-- Price filter moved to products.php -->
         </div>
 
         <?php if (isset($error)): ?>

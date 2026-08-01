@@ -6,6 +6,12 @@ if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
     die("<div style='font-family:sans-serif; text-align:center; margin-top:50px;'><h2>Your cart is empty.</h2><a href='index.php'>Go back to shop</a></div>");
 }
 
+if (!isset($_SESSION['user_id'])) {
+    // If not logged in, they shouldn't even be here since we fixed cart auth, but just in case:
+    header("Location: login.php");
+    exit;
+}
+
 try {
     // 1. Calculate total amount
     $totalAmount = 0.0;
@@ -16,8 +22,8 @@ try {
     // 2. Start transaction
     $pdo->beginTransaction();
 
-    // 3. Insert into orders table (Using user_id = 1 as a placeholder since there is no auth)
-    $userId = 1; 
+    // 3. Insert into orders table using actual user ID
+    $userId = $_SESSION['user_id']; 
     $orderDate = date('Y-m-d H:i:s');
     $status = 'Pending';
     
