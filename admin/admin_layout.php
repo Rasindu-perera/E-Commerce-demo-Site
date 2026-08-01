@@ -2,12 +2,28 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
-    header('Location: ../login.php');
+if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] !== true) {
+    header("Location: ../login.php");
     exit;
 }
 
-$pageTitle = $pageTitle ?? "Admin Dashboard";
+require_once __DIR__ . '/../config/db.php';
+// Fetch pending orders for notifications
+$notifStmt = $pdo->query("
+    SELECT o.id, o.total_amount, o.order_date, u.first_name, u.last_name 
+    FROM orders o 
+    JOIN users u ON o.user_id = u.id 
+    WHERE o.status = 'Pending' 
+    ORDER BY o.order_date DESC 
+    LIMIT 5
+");
+$pendingNotifications = $notifStmt->fetchAll();
+
+$notifCountStmt = $pdo->query("SELECT COUNT(*) FROM orders WHERE status = 'Pending'");
+$pendingCount = $notifCountStmt->fetchColumn();
+
+// Default values if not set
+$pageTitle = $pageTitle ?? "Dashboard";
 $activeMenu = $activeMenu ?? "overview";
 ?>
 <!DOCTYPE html>
@@ -113,14 +129,47 @@ $activeMenu = $activeMenu ?? "overview";
         <header class="h-20 glass-panel sticky top-0 z-30 flex items-center justify-between px-8 border-b border-slate-700/50 shadow-sm backdrop-blur-xl">
             <h1 class="text-2xl font-bold text-white tracking-tight"><?= htmlspecialchars($pageTitle) ?></h1>
             <div class="flex items-center space-x-5">
-                <div class="relative hidden sm:block">
-                    <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm"></i>
-                    <input type="text" placeholder="Search..." class="bg-slate-800/80 border border-slate-700/50 text-sm text-white rounded-full pl-9 pr-4 py-2 w-48 outline-none focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/50 transition-all">
+                <div class="relative group">
+                    <button class="relative text-slate-400 hover:text-white transition-colors py-2">
+                        <i class="fa-regular fa-bell text-xl"></i>
+                        <?php if ($pendingCount > 0): ?>
+                            <span class="absolute top-1 right-0 bg-rose-500 text-[9px] font-bold text-white px-1.5 py-0.5 rounded-full border-2 border-slate-900 shadow-lg"><?= $pendingCount ?></span>
+                        <?php endif; ?>
+                    </button>
+                    <!-- Notification Dropdown -->
+                    <div class="absolute right-0 mt-2 w-80 bg-slate-800 border border-slate-700/50 rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden backdrop-blur-xl">
+                        <div class="p-4 border-b border-slate-700/50 bg-slate-800/80">
+                            <h3 class="text-white font-semibold flex items-center justify-between">
+                                Notifications
+                                <?php if ($pendingCount > 0): ?>
+                                    <span class="bg-rose-500/20 text-rose-400 text-xs px-2 py-1 rounded-md"><?= $pendingCount ?> New</span>
+                                <?php endif; ?>
+                            </h3>
+                        </div>
+                        <div class="max-h-80 overflow-y-auto">
+                            <?php if (empty($pendingNotifications)): ?>
+                                <div class="p-6 text-center text-slate-400">
+                                    <i class="fa-regular fa-bell-slash text-2xl mb-2 opacity-50"></i>
+                                    <p class="text-sm">You're all caught up!</p>
+                                </div>
+                            <?php else: ?>
+                                <?php foreach ($pendingNotifications as $notif): ?>
+                                    <a href="admin_orders.php" class="block p-4 border-b border-slate-700/30 hover:bg-slate-700/50 transition-colors">
+                                        <div class="flex justify-between items-start mb-1">
+                                            <span class="text-sm font-medium text-white">New Order #<?= $notif['id'] ?></span>
+                                            <span class="text-xs text-indigo-400 font-bold">$<?= number_format($notif['total_amount'], 2) ?></span>
+                                        </div>
+                                        <p class="text-xs text-slate-400 mb-2">By <?= htmlspecialchars($notif['first_name'] . ' ' . $notif['last_name']) ?></p>
+                                        <span class="text-[10px] text-slate-500"><i class="fa-regular fa-clock mr-1"></i><?= date('M d, H:i', strtotime($notif['order_date'])) ?></span>
+                                    </a>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                        <a href="admin_orders.php" class="block p-3 text-center text-xs font-medium text-indigo-400 hover:text-indigo-300 hover:bg-slate-700/50 transition-colors bg-slate-800/80">
+                            View All Orders
+                        </a>
+                    </div>
                 </div>
-                <button class="relative text-slate-400 hover:text-white transition-colors">
-                    <i class="fa-regular fa-bell text-xl"></i>
-                    <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-rose-500 border-2 border-slate-900 rounded-full"></span>
-                </button>
                 <a href="../profile.php" class="flex items-center space-x-3 pl-4 border-l border-slate-700/50 cursor-pointer group">
                     <img src="https://ui-avatars.com/api/?name=Admin&background=6366f1&color=fff" alt="Admin" class="w-9 h-9 rounded-full ring-2 ring-transparent group-hover:ring-indigo-500/50 transition-all">
                     <div class="hidden sm:block">

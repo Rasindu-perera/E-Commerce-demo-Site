@@ -99,9 +99,9 @@ ob_start();
                             <p class="text-xs text-slate-400 mt-1">Trailing 12 months performance</p>
                         </div>
                         <div class="bg-slate-800/50 rounded-lg p-1 flex">
-                            <button class="px-3 py-1 text-xs font-medium rounded-md bg-indigo-500 text-white shadow">12M</button>
-                            <button class="px-3 py-1 text-xs font-medium rounded-md text-slate-400 hover:text-white transition-colors">6M</button>
-                            <button class="px-3 py-1 text-xs font-medium rounded-md text-slate-400 hover:text-white transition-colors">30D</button>
+                            <button id="btn-12m" class="chart-filter-btn px-3 py-1 text-xs font-medium rounded-md bg-indigo-500 text-white shadow transition-all">12M</button>
+                            <button id="btn-6m" class="chart-filter-btn px-3 py-1 text-xs font-medium rounded-md text-slate-400 hover:text-white transition-all">6M</button>
+                            <button id="btn-30d" class="chart-filter-btn px-3 py-1 text-xs font-medium rounded-md text-slate-400 hover:text-white transition-all">30D</button>
                         </div>
                     </div>
                     <div class="relative h-[300px] w-full">
@@ -118,7 +118,7 @@ ob_start();
                         </div>
                         <button class="text-slate-400 hover:text-white transition-colors"><i class="fa-solid fa-ellipsis"></i></button>
                     </div>
-                    <div class="relative flex-grow flex items-center justify-center min-h-[250px]">
+                    <div class="relative flex-grow flex items-center justify-center min-h-[400px]">
                         <canvas id="productsChart"></canvas>
                     </div>
                 </div>
@@ -144,31 +144,59 @@ ob_start();
             jspdfScript.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
             document.head.appendChild(jspdfScript);
 
+            // Add jsPDF-AutoTable
+            const autoTableScript = document.createElement('script');
+            autoTableScript.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js";
+            document.head.appendChild(autoTableScript);
+
             document.getElementById('exportPdfBtn').addEventListener('click', function() {
-                if(window.jspdf) {
-                    const { jsPDF } = window.jspdf;
-                    const doc = new jsPDF();
+                if(window.jspdf && window.jspdf.jsPDF) {
+                    const doc = new window.jspdf.jsPDF();
                     
                     doc.setFontSize(18);
-                    doc.text("Analytics Dashboard Snapshot", 14, 22);
+                    doc.text("Analytics Dashboard Report", 14, 22);
                     doc.setFontSize(11);
+                    doc.setTextColor(100);
                     doc.text("Generated on: " + new Date().toLocaleString(), 14, 30);
                     
                     doc.setFontSize(14);
+                    doc.setTextColor(20);
                     doc.text("Overview Metrics", 14, 45);
                     
                     const sales = document.getElementById('metric-sales').innerText;
                     const orders = document.getElementById('metric-orders').innerText;
-                    const topProduct = document.getElementById('metric-top-product').innerText;
-                    const topCustomer = document.getElementById('metric-top-customer').innerText;
                     
-                    doc.setFontSize(12);
+                    doc.setFontSize(11);
                     doc.text(`Monthly Revenue: ${sales}`, 14, 55);
-                    doc.text(`Total Orders: ${orders}`, 14, 65);
-                    doc.text(`Top Product: ${topProduct}`, 14, 75);
-                    doc.text(`Top Customer: ${topCustomer}`, 14, 85);
+                    doc.text(`Total Orders: ${orders}`, 14, 62);
                     
-                    doc.save("dashboard_snapshot.pdf");
+                    if (window.dashboardData) {
+                        // Top Products Table
+                        doc.setFontSize(14);
+                        doc.text("Top Selling Products", 14, 75);
+                        const productBody = window.dashboardData.top_products.map(p => [p.name, p.category, p.total_sold]);
+                        doc.autoTable({
+                            startY: 80,
+                            head: [['Product Name', 'Category', 'Units Sold']],
+                            body: productBody,
+                            theme: 'striped',
+                            headStyles: { fillColor: [99, 102, 241] }
+                        });
+                        
+                        // Top Customers Table
+                        doc.setFontSize(14);
+                        doc.text("Top Customers", 14, doc.lastAutoTable.finalY + 15);
+                        const customerBody = window.dashboardData.top_customers.map(c => [`${c.first_name} ${c.last_name}`, c.email, `$${parseFloat(c.total_spent).toFixed(2)}`]);
+                        doc.autoTable({
+                            startY: doc.lastAutoTable.finalY + 20,
+                            head: [['Customer Name', 'Email', 'Total Spent']],
+                            body: customerBody,
+                            theme: 'striped',
+                            headStyles: { fillColor: [99, 102, 241] }
+                        });
+                    }
+                    
+                    doc.save("dashboard_report.pdf");
                 } else {
                     alert("PDF Library is still loading. Please try again in a moment.");
                 }
@@ -209,27 +237,23 @@ ob_start();
                             document.getElementById('metric-top-customer').innerText = "N/A";
                         }
                         
+                        // Save data globally for PDF export and switching
+                        window.dashboardData = data;
+                        
                         // --- Revenue Line Chart ---
                         const revenueCtx = document.getElementById('revenueChart').getContext('2d');
-                        
-                        const labels = data.monthly_revenue_trend.map(item => {
-                            const date = new Date(item.month + '-01');
-                            return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
-                        });
-                        const revenueData = data.monthly_revenue_trend.map(item => parseFloat(item.revenue));
-                        
                         let gradient = revenueCtx.createLinearGradient(0, 0, 0, 300);
-                        gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)'); // Indigo 500 with opacity
+                        gradient.addColorStop(0, 'rgba(99, 102, 241, 0.4)'); 
                         gradient.addColorStop(1, 'rgba(99, 102, 241, 0.0)');
                         
-                        new Chart(revenueCtx, {
+                        window.revenueChart = new Chart(revenueCtx, {
                             type: 'line',
                             data: {
-                                labels: labels.length > 0 ? labels : ['No Data'],
+                                labels: [],
                                 datasets: [{
-                                    label: 'Monthly Revenue',
-                                    data: revenueData.length > 0 ? revenueData : [0],
-                                    borderColor: '#818cf8', // Indigo 400
+                                    label: 'Revenue',
+                                    data: [],
+                                    borderColor: '#818cf8',
                                     backgroundColor: gradient,
                                     borderWidth: 3,
                                     pointBackgroundColor: '#1e293b',
@@ -240,7 +264,7 @@ ob_start();
                                     pointHoverBackgroundColor: '#818cf8',
                                     pointHoverBorderColor: '#fff',
                                     fill: true,
-                                    tension: 0.4 // Smooth curves
+                                    tension: 0.4
                                 }]
                             },
                             options: {
@@ -288,6 +312,56 @@ ob_start();
                             }
                         });
 
+                        // Function to update revenue chart
+                        function updateRevenueChart(period) {
+                            let chartLabels = [];
+                            let chartData = [];
+                            
+                            // Reset active buttons
+                            document.querySelectorAll('.chart-filter-btn').forEach(b => {
+                                b.classList.remove('bg-indigo-500', 'text-white', 'shadow');
+                                b.classList.add('text-slate-400');
+                            });
+
+                            if (period === '12m') {
+                                document.getElementById('btn-12m').classList.add('bg-indigo-500', 'text-white', 'shadow');
+                                document.getElementById('btn-12m').classList.remove('text-slate-400');
+                                chartLabels = data.monthly_revenue_trend.map(item => {
+                                    return new Date(item.month + '-01').toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+                                });
+                                chartData = data.monthly_revenue_trend.map(item => parseFloat(item.revenue));
+                            } 
+                            else if (period === '6m') {
+                                document.getElementById('btn-6m').classList.add('bg-indigo-500', 'text-white', 'shadow');
+                                document.getElementById('btn-6m').classList.remove('text-slate-400');
+                                const slice = data.monthly_revenue_trend.slice(-6);
+                                chartLabels = slice.map(item => {
+                                    return new Date(item.month + '-01').toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+                                });
+                                chartData = slice.map(item => parseFloat(item.revenue));
+                            }
+                            else if (period === '30d') {
+                                document.getElementById('btn-30d').classList.add('bg-indigo-500', 'text-white', 'shadow');
+                                document.getElementById('btn-30d').classList.remove('text-slate-400');
+                                chartLabels = data.daily_revenue_trend.map(item => {
+                                    return new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                                });
+                                chartData = data.daily_revenue_trend.map(item => parseFloat(item.revenue));
+                            }
+                            
+                            window.revenueChart.data.labels = chartLabels;
+                            window.revenueChart.data.datasets[0].data = chartData;
+                            window.revenueChart.update();
+                        }
+
+                        // Attach event listeners
+                        document.getElementById('btn-12m').addEventListener('click', () => updateRevenueChart('12m'));
+                        document.getElementById('btn-6m').addEventListener('click', () => updateRevenueChart('6m'));
+                        document.getElementById('btn-30d').addEventListener('click', () => updateRevenueChart('30d'));
+                        
+                        // Initialize with 12M
+                        updateRevenueChart('12m');
+
                         // --- Top Products Doughnut Chart ---
                         const productsCtx = document.getElementById('productsChart').getContext('2d');
                         
@@ -319,6 +393,11 @@ ob_start();
                                 responsive: true,
                                 maintainAspectRatio: false,
                                 cutout: '75%', // Modern thin doughnut
+                                layout: {
+                                    padding: {
+                                        bottom: 20
+                                    }
+                                },
                                 plugins: {
                                     legend: {
                                         position: 'bottom',
@@ -326,7 +405,8 @@ ob_start();
                                             padding: 20,
                                             usePointStyle: true,
                                             pointStyle: 'circle',
-                                            font: { size: 11 }
+                                            font: { size: 12 },
+                                            color: '#cbd5e1'
                                         }
                                     }
                                 }

@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - TechStore</title>
+    <title>Login - KWRmart</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
                 </div>
                 <h1 class="text-2xl font-bold text-dark tracking-tight">Welcome Back</h1>
-                <p class="text-slate-500 text-sm mt-2">Log in to your TechStore account.</p>
+                <p class="text-slate-500 text-sm mt-2">Log in to your KWRmart account.</p>
             </div>
 
             <?php if ($error): ?>

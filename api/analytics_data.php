@@ -35,6 +35,19 @@ try {
     ");
     $data['monthly_revenue_trend'] = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
+    // 2.5) Daily revenue trend for the last 30 days
+    $stmt2_5 = $pdo->query("
+        SELECT 
+            DATE_FORMAT(order_date, '%Y-%m-%d') as date,
+            COALESCE(SUM(total_amount), 0) as revenue
+        FROM orders
+        WHERE order_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY)
+        AND status = 'Completed'
+        GROUP BY DATE_FORMAT(order_date, '%Y-%m-%d')
+        ORDER BY date ASC
+    ");
+    $data['daily_revenue_trend'] = $stmt2_5->fetchAll(PDO::FETCH_ASSOC);
+
     // 3) Top 5 best-selling products by volume
     $stmt3 = $pdo->query("
         SELECT 

@@ -57,7 +57,7 @@ $orders = $orderStmt->fetchAll();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium TechStore</title>
+    <title>Premium KWRmart</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="public/js/tailwind-config.js"></script>
@@ -79,7 +79,7 @@ $orders = $orderStmt->fetchAll();
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mr-3 shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-all duration-300">
                         <i class="fa-solid fa-store text-white text-lg"></i>
                     </div>
-                    <span class="font-bold text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">TechStore</span>
+                    <span class="font-bold text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">KWRmart</span>
                 </div>
                 
                 <div class="hidden md:block">
@@ -95,7 +95,7 @@ $orders = $orderStmt->fetchAll();
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-6">
+                <div class="flex items-center space-x-4">
                     
                     <?php if (!isset($_SESSION['user_id'])): ?>
                         <div class="hidden sm:flex items-center space-x-4">
@@ -285,7 +285,7 @@ $orders = $orderStmt->fetchAll();
                         <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mr-3 shadow-lg shadow-indigo-500/20">
                             <i class="fa-solid fa-store text-white"></i>
                         </div>
-                        <span class="font-bold text-2xl text-white tracking-tight">TechStore</span>
+                        <span class="font-bold text-2xl text-white tracking-tight">KWRmart</span>
                     </div>
                     <p class="text-slate-400 text-sm leading-relaxed mb-6">
                         Your premium destination for the latest technology. Experience innovation with our curated selection of top-tier electronics.
@@ -330,7 +330,7 @@ $orders = $orderStmt->fetchAll();
             </div>
             
             <div class="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="text-slate-500 text-sm">&copy; <?= date('Y') ?> Premium TechStore. All rights reserved.</p>
+                <p class="text-slate-500 text-sm">&copy; <?= date('Y') ?> Premium KWRmart. All rights reserved.</p>
                 <div class="flex space-x-6 text-sm text-slate-500">
                     <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
                     <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
