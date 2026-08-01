@@ -11,8 +11,7 @@ try {
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     // Database එක හැදීම
-    $pdo->exec("CREATE DATABASE IF NOT EXISTS ecommerce_analytics");
-    $pdo->exec("USE ecommerce_analytics");
+    $pdo->exec("USE if0_42550509_ecommerce_analytics");
 
     echo "Database created/selected successfully.<br>";
 
