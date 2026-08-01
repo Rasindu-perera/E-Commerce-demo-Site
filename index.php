@@ -26,6 +26,7 @@ try {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="public/css/style.css">
+    <script src="public/js/cart.js" defer></script>
 </head>
 <body class="antialiased min-h-screen flex flex-col selection:bg-indigo-500/30">
 
@@ -61,13 +62,13 @@ try {
                     <button class="text-slate-400 hover:text-white transition-colors relative">
                         <i class="fa-solid fa-search text-lg"></i>
                     </button>
-                    <button class="relative group">
+                    <a href="checkout.php" class="relative group block">
                         <div class="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-700 border border-slate-700/50 rounded-full px-5 py-2.5 transition-all group-hover:border-indigo-500/50 shadow-sm">
                             <i class="fa-solid fa-cart-shopping text-slate-300 group-hover:text-white transition-colors"></i>
                             <span class="text-sm font-medium text-white hidden sm:block">Cart</span>
                             <span class="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg shadow-rose-500/30 border border-slate-900">0</span>
                         </div>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -181,7 +182,7 @@ try {
                                         <span class="text-sm text-indigo-400">$</span><?= number_format($product['selling_price'], 2) ?>
                                     </p>
                                 </div>
-                                <button class="btn-gradient text-white text-sm font-medium px-4 py-2 rounded-xl flex items-center space-x-2 shadow-lg shadow-indigo-500/20 group/btn">
+                                <button class="add-to-cart-btn btn-gradient text-white text-sm font-medium px-4 py-2 rounded-xl flex items-center space-x-2 shadow-lg shadow-indigo-500/20 group/btn" data-id="<?= $product['id'] ?>" data-price="<?= $product['selling_price'] ?>">
                                     <span>Add</span>
                                     <i class="fa-solid fa-cart-plus group-hover/btn:scale-110 transition-transform"></i>
                                 </button>
