@@ -4,7 +4,7 @@ require_once 'config/db.php';
 
 try {
     // Fetch all products
-    $stmt = $pdo->query("SELECT * FROM products ORDER BY id DESC");
+    $stmt = $pdo->query("SELECT p.*, COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.id) as review_count FROM products p LEFT JOIN reviews r ON p.id = r.product_id GROUP BY p.id ORDER BY p.id DESC");
     $products = $stmt->fetchAll();
 } catch (PDOException $e) {
     // If table doesn't exist or other DB errors
@@ -172,10 +172,10 @@ try {
                             
                             <!-- Rating -->
                             <div class="flex items-center space-x-1 mb-4">
-                                <?php $rating = rand(4, 5); for($i=0; $i<5; $i++): ?>
-                                    <i class="fa-solid fa-star text-[10px] <?= $i < $rating ? 'text-amber-400' : 'text-slate-600' ?>"></i>
+                                <?php $rating = round($product['avg_rating'] ?? 0); for($i=1; $i<=5; $i++): ?>
+                                    <i class="fa-<?= $i <= $rating ? 'solid' : 'regular' ?> fa-star text-[10px] <?= $i <= $rating ? 'text-amber-400' : 'text-slate-600' ?>"></i>
                                 <?php endfor; ?>
-                                <span class="text-xs text-slate-400 font-medium ml-1.5">(<?= rand(12, 120) ?> reviews)</span>
+                                <span class="text-xs text-slate-400 font-medium ml-1.5">(<?= $product['review_count'] ?? 0 ?> reviews)</span>
                             </div>
                             
                             <div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-700/50">

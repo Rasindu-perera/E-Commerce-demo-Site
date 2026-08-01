@@ -13,29 +13,29 @@ $sort = $_GET['sort'] ?? 'latest';
 $offer = isset($_GET['offer']) && $_GET['offer'] === 'true';
 
 // Build the query
-$query = "SELECT * FROM products WHERE 1=1";
+$query = "SELECT p.*, COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.id) as review_count FROM products p LEFT JOIN reviews r ON p.id = r.product_id WHERE 1=1";
 $params = [];
 
 if ($search !== '') {
-    $query .= " AND name LIKE ?";
+    $query .= " AND p.name LIKE ?";
     $params[] = "%$search%";
 }
 
 if ($category !== '') {
-    $query .= " AND category = ?";
+    $query .= " AND p.category = ?";
     $params[] = $category;
 }
 
 if ($offer) {
-    $query .= " AND discount_percentage > 0";
+    $query .= " AND p.discount_percentage > 0";
 }
 
 if ($sort === 'price_asc') {
-    $query .= " ORDER BY (selling_price - (selling_price * COALESCE(discount_percentage, 0) / 100)) ASC";
+    $query .= " GROUP BY p.id ORDER BY (p.selling_price - (p.selling_price * COALESCE(p.discount_percentage, 0) / 100)) ASC";
 } elseif ($sort === 'price_desc') {
-    $query .= " ORDER BY (selling_price - (selling_price * COALESCE(discount_percentage, 0) / 100)) DESC";
+    $query .= " GROUP BY p.id ORDER BY (p.selling_price - (p.selling_price * COALESCE(p.discount_percentage, 0) / 100)) DESC";
 } else {
-    $query .= " ORDER BY id DESC";
+    $query .= " GROUP BY p.id ORDER BY p.id DESC";
 }
 
 try {
@@ -48,7 +48,7 @@ try {
     $categories = $catStmt->fetchAll(PDO::FETCH_COLUMN);
     
     // Fetch products for 'Special Offers' that actually have a discount
-    $offerStmt = $pdo->query("SELECT * FROM products WHERE discount_percentage > 0 ORDER BY RAND() LIMIT 3");
+    $offerStmt = $pdo->query("SELECT p.*, COALESCE(AVG(r.rating), 0) as avg_rating, COUNT(r.id) as review_count FROM products p LEFT JOIN reviews r ON p.id = r.product_id WHERE p.discount_percentage > 0 GROUP BY p.id ORDER BY RAND() LIMIT 3");
     $specialOffers = $offerStmt->fetchAll();
     
 } catch (PDOException $e) {
@@ -272,10 +272,10 @@ try {
                                 </h3>
                                 
                                 <div class="flex items-center space-x-1 mb-4">
-                                    <?php $rating = rand(4, 5); for($i=0; $i<5; $i++): ?>
-                                        <i class="fa-solid fa-star text-[10px] <?= $i < $rating ? 'text-amber-400' : 'text-slate-600' ?>"></i>
+                                    <?php $rating = round($product['avg_rating'] ?? 0); for($i=1; $i<=5; $i++): ?>
+                                        <i class="fa-<?= $i <= $rating ? 'solid' : 'regular' ?> fa-star text-[10px] <?= $i <= $rating ? 'text-amber-400' : 'text-slate-600' ?>"></i>
                                     <?php endfor; ?>
-                                    <span class="text-xs text-slate-400 font-medium ml-1.5">(<?= rand(12, 120) ?> reviews)</span>
+                                    <span class="text-xs text-slate-400 font-medium ml-1.5">(<?= $product['review_count'] ?? 0 ?> reviews)</span>
                                 </div>
                                 
                                 <div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-700/50">
