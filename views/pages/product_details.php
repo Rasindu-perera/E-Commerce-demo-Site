@@ -76,20 +76,26 @@ $imagePath = !empty($product['image_path']) ? $product['image_path'] : "https://
 
     <!-- Navigation Bar -->
     <?php
-    $header_file = file_get_contents('index.php');
+    $header_file = file_get_contents(__DIR__ . '/home.php');
     if(preg_match('/<nav class="sticky.*?<\/nav>/s', $header_file, $matches)) {
         echo $matches[0];
     }
     ?>
     
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-        <!-- Breadcrumbs -->
-        <div class="text-sm text-slate-400 mb-8">
-            <a href="index.php" class="hover:text-indigo-400">Home</a>
-            <span class="mx-2">/</span>
-            <a href="products.php?category=<?= urlencode($product['category']) ?>" class="hover:text-indigo-400"><?= htmlspecialchars($product['category']) ?></a>
-            <span class="mx-2">/</span>
-            <span class="text-slate-200"><?= htmlspecialchars($product['name']) ?></span>
+        <!-- Breadcrumbs & Back Button -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+            <div class="text-sm text-slate-400">
+                <a href="/" class="hover:text-indigo-400">Home</a>
+                <span class="mx-2">/</span>
+                <a href="/products?category=<?= urlencode($product['category']) ?>" class="hover:text-indigo-400"><?= htmlspecialchars($product['category']) ?></a>
+                <span class="mx-2">/</span>
+                <span class="text-slate-200"><?= htmlspecialchars($product['name']) ?></span>
+            </div>
+            <a href="javascript:history.back()" class="inline-flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white px-4 py-2 rounded-lg border border-slate-700 transition-colors text-sm font-medium w-fit">
+                <i class="fa-solid fa-arrow-left"></i>
+                <span>Back</span>
+            </a>
         </div>
 
         <div class="glass-panel p-8 rounded-3xl border border-slate-700/50 shadow-2xl mb-12">
