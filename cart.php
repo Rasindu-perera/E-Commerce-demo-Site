@@ -98,7 +98,7 @@ $total = $subtotal + $tax;
                             <i class="fa-solid fa-chart-line mr-2"></i> Admin Dashboard
                         </a>
                     <?php endif; ?>
-                    <a href="checkout.php" class="relative group block">
+                    <a href="cart.php" class="relative group block">
                         <div class="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-700 border border-slate-700/50 rounded-full px-5 py-2.5 transition-all group-hover:border-indigo-500/50 shadow-sm">
                             <i class="fa-solid fa-cart-shopping text-slate-300 group-hover:text-white transition-colors"></i>
                             <span class="text-sm font-medium text-white hidden sm:block">Cart</span>
