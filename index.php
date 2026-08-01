@@ -63,6 +63,19 @@ try {
                     <button class="text-slate-400 hover:text-white transition-colors relative">
                         <i class="fa-solid fa-search text-lg"></i>
                     </button>
+                    
+                    <?php if (!isset($_SESSION['user_id'])): ?>
+                        <div class="hidden sm:flex items-center space-x-4">
+                            <a href="login.php" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">Login</a>
+                            <a href="register.php" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-lg shadow-indigo-500/20">Register</a>
+                        </div>
+                    <?php else: ?>
+                        <div class="hidden sm:flex items-center space-x-4 border-r border-slate-700/50 pr-4">
+                            <span class="text-slate-300 text-sm">Hi, <span class="font-semibold text-white"><?= htmlspecialchars($_SESSION['first_name'] ?? 'User') ?></span></span>
+                            <a href="logout.php" class="text-slate-400 hover:text-rose-400 transition-colors" title="Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                        </div>
+                    <?php endif; ?>
+
                     <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true): ?>
                         <a href="admin/dashboard.php" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-lg shadow-indigo-500/20 flex items-center">
                             <i class="fa-solid fa-chart-line mr-2"></i> Admin Dashboard
