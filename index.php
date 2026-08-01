@@ -44,15 +44,15 @@ try {
                 
                 <div class="hidden md:block">
                     <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="#" class="text-white relative group px-1 py-2 text-sm font-medium">
+                        <a href="index.php" class="text-white relative group px-1 py-2 text-sm font-medium">
                             Home
                             <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-indigo-500 rounded-full"></span>
                         </a>
-                        <a href="#" class="text-slate-400 hover:text-white transition-colors relative group px-1 py-2 text-sm font-medium">
+                        <a href="products.php" class="text-slate-400 hover:text-white transition-colors relative group px-1 py-2 text-sm font-medium">
                             Products
                             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 rounded-full transition-all group-hover:w-full"></span>
                         </a>
-                        <a href="#" class="text-slate-400 hover:text-white transition-colors relative group px-1 py-2 text-sm font-medium">
+                        <a href="products.php" class="text-slate-400 hover:text-white transition-colors relative group px-1 py-2 text-sm font-medium">
                             Categories
                             <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 rounded-full transition-all group-hover:w-full"></span>
                         </a>
