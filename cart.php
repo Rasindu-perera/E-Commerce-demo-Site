@@ -231,20 +231,20 @@ $total = $subtotal + $tax;
                 <div>
                     <h4 class="text-white font-semibold mb-6">Shop Categories</h4>
                     <ul class="space-y-3 text-sm text-slate-400">
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Smartphones</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Laptops & PC</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Audio & Wearables</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Accessories</span></a></li>
+                        <li><a href="products.php?category=Smartphones" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Smartphones</span></a></li>
+                        <li><a href="products.php?category=Laptops" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Laptops & PC</span></a></li>
+                        <li><a href="products.php?category=Audio" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Audio & Wearables</span></a></li>
+                        <li><a href="products.php?category=Accessories" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Accessories</span></a></li>
                     </ul>
                 </div>
                 
                 <div>
                     <h4 class="text-white font-semibold mb-6">Customer Service</h4>
                     <ul class="space-y-3 text-sm text-slate-400">
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Track Order</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Returns & Refunds</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>FAQ</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Contact Support</span></a></li>
+                        <li><a href="track_order.php" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Track Order</span></a></li>
+                        <li><a href="returns.php" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Returns & Refunds</span></a></li>
+                        <li><a href="faq.php" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>FAQ</span></a></li>
+                        <li><a href="contact.php" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Contact Support</span></a></li>
                     </ul>
                 </div>
 
@@ -263,132 +263,12 @@ $total = $subtotal + $tax;
             <div class="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                 <p class="text-slate-500 text-sm">&copy; <?= date('Y') ?> Premium KWRmart. All rights reserved.</p>
                 <div class="flex space-x-6 text-sm text-slate-500">
-                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="privacy.php" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="terms.php" class="hover:text-white transition-colors">Terms of Service</a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script>
-        function formatMoney(amount) {
-            return parseFloat(amount).toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
-        }
-
-        async function updateQuantity(productId, change, price) {
-            const qtyElement = document.querySelector(`.item-qty-${productId}`);
-            let currentQty = parseInt(qtyElement.textContent);
-            let newQty = currentQty + change;
-            
-            if (newQty < 1) return; // Must be at least 1, otherwise use remove button
-
-            // Optimistic UI update
-            qtyElement.textContent = newQty;
-            const subtotalElement = document.querySelector(`.item-subtotal-${productId}`);
-            subtotalElement.textContent = formatMoney(newQty * price);
-            
-            recalculateSummary();
-
-            // Send AJAX request
-            try {
-                const response = await fetch('api/cart_action.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'update',
-                        product_id: productId,
-                        quantity: newQty
-                    })
-                });
-                
-                const data = await response.json();
-                if (data.require_login) {
-                    alert(data.message);
-                    window.location.href = 'login.php';
-                    return;
-                }
-                
-                updateCartBadge();
-            } catch (error) {
-                console.error("Error updating cart:", error);
-                qtyElement.textContent = currentQty;
-                subtotalElement.textContent = formatMoney(currentQty * price);
-                recalculateSummary();
-            }
-        }
-
-        async function removeCartItem(productId) {
-            const itemElement = document.getElementById(`cart-item-${productId}`);
-            itemElement.style.opacity = '0.5';
-            itemElement.style.pointerEvents = 'none';
-
-            try {
-                const response = await fetch('api/cart_action.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'remove',
-                        product_id: productId
-                    })
-                });
-                
-                const data = await response.json();
-                if (data.require_login) {
-                    alert(data.message);
-                    window.location.href = 'login.php';
-                    return;
-                }
-                
-                itemElement.remove();
-                recalculateSummary();
-                updateCartBadge();
-                
-                const remainingItems = document.querySelectorAll('[id^="cart-item-"]');
-                if (remainingItems.length === 0) {
-                    location.reload(); 
-                }
-                
-            } catch (error) {
-                console.error("Error removing item:", error);
-                itemElement.style.opacity = '1';
-                itemElement.style.pointerEvents = 'auto';
-            }
-        }
-        
-        function recalculateSummary() {
-            let newSubtotal = 0;
-            const itemSubtotals = document.querySelectorAll('[class^="item-subtotal-"]');
-            
-            itemSubtotals.forEach(el => {
-                newSubtotal += parseFloat(el.textContent.replace(/,/g, ''));
-            });
-            
-            const newTax = newSubtotal * 0.10;
-            const newTotal = newSubtotal + newTax;
-            
-            const subtotalEl = document.getElementById('summary-subtotal');
-            const taxEl = document.getElementById('summary-tax');
-            const totalEl = document.getElementById('summary-total');
-            
-            if (subtotalEl) subtotalEl.textContent = formatMoney(newSubtotal);
-            if (taxEl) taxEl.textContent = formatMoney(newTax);
-            if (totalEl) totalEl.textContent = formatMoney(newTotal);
-        }
-        
-        async function updateCartBadge() {
-            try {
-                const response = await fetch('api/cart_action.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'get' })
-                });
-                const data = await response.json();
-                if (data.cart_count !== undefined) {
-                    const badge = document.querySelector('.fa-cart-shopping').nextElementSibling.nextElementSibling;
-                    if(badge) badge.textContent = data.cart_count;
-                }
-            } catch (e) {}
-        }
-    </script>
 </body>
 </html>

@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cost_price = (float)($_POST['cost_price'] ?? 0);
     $selling_price = (float)($_POST['selling_price'] ?? 0);
     $discount_percentage = (int)($_POST['discount_percentage'] ?? 0);
+    $description = trim($_POST['description'] ?? '');
     $existing_image = $_POST['existing_image'] ?? '';
 
     if (empty($name) || empty($category) || $cost_price <= 0 || $selling_price <= 0 || $discount_percentage < 0 || $discount_percentage > 100) {
@@ -55,13 +56,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         if ($id > 0) {
             // Update existing product
-            $stmt = $pdo->prepare("UPDATE products SET name = ?, category = ?, image_path = ?, cost_price = ?, selling_price = ?, discount_percentage = ? WHERE id = ?");
-            $stmt->execute([$name, $category, $imagePath, $cost_price, $selling_price, $discount_percentage, $id]);
+            $stmt = $pdo->prepare("UPDATE products SET name = ?, category = ?, description = ?, image_path = ?, cost_price = ?, selling_price = ?, discount_percentage = ? WHERE id = ?");
+            $stmt->execute([$name, $category, $description, $imagePath, $cost_price, $selling_price, $discount_percentage, $id]);
             echo json_encode(['success' => true, 'message' => 'Product updated successfully.']);
         } else {
             // Add new product
-            $stmt = $pdo->prepare("INSERT INTO products (name, category, image_path, cost_price, selling_price, discount_percentage) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$name, $category, $imagePath, $cost_price, $selling_price, $discount_percentage]);
+            $stmt = $pdo->prepare("INSERT INTO products (name, category, description, image_path, cost_price, selling_price, discount_percentage) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$name, $category, $description, $imagePath, $cost_price, $selling_price, $discount_percentage]);
             echo json_encode(['success' => true, 'message' => 'Product added successfully.']);
         }
     } catch (Exception $e) {

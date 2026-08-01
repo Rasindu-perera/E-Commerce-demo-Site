@@ -297,20 +297,20 @@ $orders = $orderStmt->fetchAll();
                 <div>
                     <h4 class="text-white font-semibold mb-6">Shop Categories</h4>
                     <ul class="space-y-3 text-sm text-slate-400">
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Smartphones</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Laptops & PC</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Audio & Wearables</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Accessories</span></a></li>
+                        <li><a href="products.php?category=Smartphones" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Smartphones</span></a></li>
+                        <li><a href="products.php?category=Laptops" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Laptops & PC</span></a></li>
+                        <li><a href="products.php?category=Audio" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Audio & Wearables</span></a></li>
+                        <li><a href="products.php?category=Accessories" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Accessories</span></a></li>
                     </ul>
                 </div>
                 
                 <div>
                     <h4 class="text-white font-semibold mb-6">Customer Service</h4>
                     <ul class="space-y-3 text-sm text-slate-400">
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Track Order</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Returns & Refunds</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>FAQ</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Contact Support</span></a></li>
+                        <li><a href="track_order.php" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Track Order</span></a></li>
+                        <li><a href="returns.php" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Returns & Refunds</span></a></li>
+                        <li><a href="faq.php" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>FAQ</span></a></li>
+                        <li><a href="contact.php" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Contact Support</span></a></li>
                     </ul>
                 </div>
 
@@ -329,44 +329,12 @@ $orders = $orderStmt->fetchAll();
             <div class="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                 <p class="text-slate-500 text-sm">&copy; <?= date('Y') ?> Premium KWRmart. All rights reserved.</p>
                 <div class="flex space-x-6 text-sm text-slate-500">
-                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="privacy.php" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="terms.php" class="hover:text-white transition-colors">Terms of Service</a>
                 </div>
             </div>
         </div>
     </footer>
 
-    <script>
-        function switchTab(tabId) {
-            // Hide all tabs
-            document.getElementById('tab-overview').classList.add('hidden');
-            document.getElementById('tab-settings').classList.add('hidden');
-            
-            // Show selected tab
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            
-            // Reset buttons
-            const btnOverview = document.getElementById('tab-btn-overview');
-            const btnSettings = document.getElementById('tab-btn-settings');
-            
-            const activeClasses = ['bg-indigo-500/10', 'text-indigo-400', 'border-indigo-500/20'];
-            const inactiveClasses = ['text-slate-400', 'hover:bg-slate-800/50', 'hover:text-white', 'border-transparent'];
-            
-            btnOverview.classList.remove(...activeClasses);
-            btnOverview.classList.add(...inactiveClasses);
-            btnSettings.classList.remove(...activeClasses);
-            btnSettings.classList.add(...inactiveClasses);
-            
-            // Set active button
-            const activeBtn = document.getElementById('tab-btn-' + tabId);
-            activeBtn.classList.remove(...inactiveClasses);
-            activeBtn.classList.add(...activeClasses);
-        }
-
-        // If URL has ?tab=settings or after form submit, show settings tab
-        <?php if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])): ?>
-            switchTab('settings');
-        <?php endif; ?>
-    </script>
 </body>
 </html>

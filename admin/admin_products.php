@@ -148,16 +148,18 @@ ob_start();
                                 <?= $product['discount_percentage'] ?? 0 ?>%
                             </td>
                             <td class="py-3 px-6">
-                                <div class="flex items-center justify-center space-x-2">
-                                    <button onclick="openProductModal(<?= htmlspecialchars(json_encode([
-                                        'id' => $product['id'],
-                                        'name' => $product['name'],
-                                        'category' => $product['category'],
-                                        'cost_price' => $product['cost_price'],
-                                        'selling_price' => $product['selling_price'],
-                                        'discount_percentage' => $product['discount_percentage'] ?? 0,
-                                        'image_path' => $product['image_path']
-                                    ])) ?>)" class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500 hover:text-white transition-colors flex items-center justify-center" title="Edit">
+                                    <button type="button" 
+                                            onclick="openProductModal({
+                                                id: <?= $product['id'] ?>,
+                                                name: '<?= htmlspecialchars($product['name']) ?>',
+                                                category: '<?= htmlspecialchars($product['category']) ?>',
+                                                cost_price: <?= $product['cost_price'] ?>,
+                                                selling_price: <?= $product['selling_price'] ?>,
+                                                discount_percentage: <?= $product['discount_percentage'] ?? 0 ?>,
+                                                description: `<?= htmlspecialchars($product['description'] ?? '') ?>`,
+                                                image_path: '<?= htmlspecialchars($product['image_path'] ?? '') ?>'
+                                            })" 
+                                            class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500 hover:text-white transition-colors flex items-center justify-center" title="Edit">
                                         <i class="fa-solid fa-pen text-xs"></i>
                                     </button>
                                     <form method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this product?');">
@@ -232,6 +234,11 @@ ob_start();
                 </div>
 
                 <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-1">Description</label>
+                    <textarea id="productDescription" name="description" rows="3" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500"></textarea>
+                </div>
+
+                <div>
                     <label class="block text-sm font-medium text-slate-400 mb-1">Product Image</label>
                     <input type="file" id="productImage" name="product_image" accept="image/*" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-500/20 file:text-indigo-400 hover:file:bg-indigo-500/30">
                     <p class="text-xs text-slate-500 mt-1">Leave empty to keep current image (if editing).</p>
@@ -285,6 +292,7 @@ ob_start();
             document.getElementById('costPrice').value = product.cost_price;
             document.getElementById('sellingPrice').value = product.selling_price;
             document.getElementById('discountPercentage').value = product.discount_percentage;
+            document.getElementById('productDescription').value = product.description || '';
             document.getElementById('existingImage').value = product.image_path || '';
         } else {
             document.getElementById('modalTitle').innerText = "Add New Product";

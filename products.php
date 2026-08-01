@@ -256,14 +256,14 @@ try {
                             </div>
                             
                             <!-- Image -->
-                            <div class="image-container h-64 w-full relative bg-slate-800 flex items-center justify-center p-4">
+                            <a href="product_details.php?id=<?= $product['id'] ?>" class="block image-container h-64 w-full relative bg-slate-800 flex items-center justify-center p-4 group-hover:opacity-90 transition-opacity">
                                 <?php if(!empty($product['image_path'])): ?>
                                     <img src="<?= htmlspecialchars($product['image_path']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" class="max-h-full max-w-full object-contain drop-shadow-2xl">
                                 <?php else: ?>
                                     <img src="https://picsum.photos/seed/<?= $product['id'] ?>/600/600" alt="<?= htmlspecialchars($product['name']) ?>" class="max-h-full max-w-full object-contain drop-shadow-2xl">
                                 <?php endif; ?>
                                 <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-80"></div>
-                            </div>
+                            </a>
 
                             <!-- Content -->
                             <div class="p-5 flex-grow flex flex-col -mt-4 relative z-10">
@@ -329,20 +329,20 @@ try {
                 <div>
                     <h4 class="text-white font-semibold mb-6">Shop Categories</h4>
                     <ul class="space-y-3 text-sm text-slate-400">
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Smartphones</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Laptops & PC</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Audio & Wearables</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Accessories</span></a></li>
+                        <li><a href="products.php?category=Smartphones" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Smartphones</span></a></li>
+                        <li><a href="products.php?category=Laptops" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Laptops & PC</span></a></li>
+                        <li><a href="products.php?category=Audio" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Audio & Wearables</span></a></li>
+                        <li><a href="products.php?category=Accessories" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Accessories</span></a></li>
                     </ul>
                 </div>
                 
                 <div>
                     <h4 class="text-white font-semibold mb-6">Customer Service</h4>
                     <ul class="space-y-3 text-sm text-slate-400">
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Track Order</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Returns & Refunds</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>FAQ</span></a></li>
-                        <li><a href="#" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Contact Support</span></a></li>
+                        <li><a href="track_order.php" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Track Order</span></a></li>
+                        <li><a href="returns.php" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Returns & Refunds</span></a></li>
+                        <li><a href="faq.php" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>FAQ</span></a></li>
+                        <li><a href="contact.php" class="hover:text-indigo-400 transition-colors flex items-center space-x-2"><i class="fa-solid fa-chevron-right text-[10px]"></i><span>Contact Support</span></a></li>
                     </ul>
                 </div>
 
@@ -361,8 +361,8 @@ try {
             <div class="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                 <p class="text-slate-500 text-sm">&copy; <?= date('Y') ?> Premium KWRmart. All rights reserved.</p>
                 <div class="flex space-x-6 text-sm text-slate-500">
-                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="privacy.php" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="terms.php" class="hover:text-white transition-colors">Terms of Service</a>
                 </div>
             </div>
         </div>

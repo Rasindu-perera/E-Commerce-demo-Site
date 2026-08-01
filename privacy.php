@@ -1,31 +1,17 @@
 <?php
 session_start();
 require_once 'config/db.php';
-
-try {
-    // Fetch all products
-    $stmt = $pdo->query("SELECT * FROM products ORDER BY id DESC");
-    $products = $stmt->fetchAll();
-} catch (PDOException $e) {
-    // If table doesn't exist or other DB errors
-    $products = [];
-    $error = "Database Error: " . $e->getMessage();
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium KWRmart</title>
-    <!-- Tailwind CSS -->
+    <title>Privacy Policy - KWRmart</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="public/js/tailwind-config.js"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="public/css/style.css">
     <script src="public/js/cart.js" defer></script>
 </head>
@@ -46,7 +32,7 @@ try {
                 
                 <!-- Center: Links -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="index.php" class="text-white border-b-2 border-indigo-500 pb-1 text-sm font-medium hover:text-indigo-400 transition-colors">Home</a>
+                    <a href="index.php" class="text-slate-400 border-b-2 border-transparent pb-1 hover:border-indigo-500 hover:text-indigo-400 text-sm font-medium transition-all duration-300">Home</a>
                     <a href="products.php" class="text-slate-400 border-b-2 border-transparent pb-1 hover:border-indigo-500 hover:text-indigo-400 text-sm font-medium transition-all duration-300">Products</a>
                 </div>
 
@@ -82,122 +68,28 @@ try {
             </div>
         </div>
     </nav>
-
-    <!-- Hero Section -->
-    <div class="relative pt-32 pb-16 sm:pt-40 sm:pb-24 overflow-hidden border-b border-slate-800/50">
-        <!-- Abstract Background Elements -->
+    
+    <div class="flex-grow pt-32 pb-16 relative">
+        <!-- Abstract Background -->
         <div class="absolute top-0 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full mix-blend-screen filter blur-[100px] opacity-70"></div>
         <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-600/20 rounded-full mix-blend-screen filter blur-[100px] opacity-70"></div>
         
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center z-10">
-            <div class="inline-flex items-center space-x-2 bg-slate-800/50 border border-slate-700 rounded-full px-3 py-1 mb-8 shadow-sm backdrop-blur-sm cursor-pointer hover:bg-slate-800 transition-colors">
-                <span class="flex h-2 w-2 relative">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-                </span>
-                <span class="text-xs font-medium text-slate-300">New arrivals for Summer 2026</span>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <div class="w-20 h-20 mx-auto rounded-2xl bg-slate-800/80 flex items-center justify-center shadow-lg border border-slate-700/50 mb-8">
+                <i class="fa-solid fa-shield-halved text-3xl text-indigo-400"></i>
             </div>
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">Privacy Policy</h1>
+            <p class="text-slate-400 text-lg mb-12">How we handle your data securely.</p>
             
-            <h1 class="text-5xl sm:text-7xl font-extrabold tracking-tight mb-6">
-                <span class="block text-white mb-2">Next Generation</span>
-                <span class="block bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">Tech & Electronics</span>
-            </h1>
-            <p class="mt-6 max-w-2xl text-lg sm:text-xl text-slate-400 mx-auto mb-10 leading-relaxed">
-                Discover the latest premium devices tailored to elevate your digital lifestyle. Exceptional quality meets stunning design aesthetics.
-            </p>
-            <div class="flex justify-center space-x-4">
-                <a href="products.php" class="btn-gradient text-white font-medium px-8 py-3.5 rounded-full shadow-lg shadow-indigo-500/25 flex items-center space-x-2">
-                    <span>Shop Now</span>
-                    <i class="fa-solid fa-arrow-right text-sm"></i>
-                </a>
-                <a href="products.php?offer=true" class="bg-slate-800/80 hover:bg-slate-700 text-white font-medium px-8 py-3.5 rounded-full border border-slate-700 transition-all flex items-center space-x-2">
-                    <span>View Offers</span>
-                </a>
+            <div class="glass-panel p-8 rounded-2xl text-left border border-slate-700/50 shadow-xl">
+                <div class="space-y-6 text-slate-300 leading-relaxed">
+                    <p>Welcome to the Privacy Policy page. This section is currently under development.</p>
+                    <p>At KWRmart, we are dedicated to providing the best premium electronics and customer service. Please check back later for detailed information regarding this topic.</p>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Products Section -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full relative z-10">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
-            <div>
-                <h2 class="text-3xl font-bold text-white mb-2">Featured Products</h2>
-                <p class="text-slate-400">Explore our most popular curated selections</p>
-            </div>
-            <!-- Price filter moved to products.php -->
-        </div>
-
-        <?php if (isset($error)): ?>
-            <div class="bg-red-500/10 border border-red-500/50 rounded-2xl p-6 text-center max-w-2xl mx-auto">
-                <i class="fa-solid fa-triangle-exclamation text-3xl text-red-400 mb-3"></i>
-                <h3 class="text-lg font-medium text-white mb-1">Failed to load products</h3>
-                <p class="text-red-200/70 text-sm"><?= htmlspecialchars($error) ?></p>
-            </div>
-        <?php elseif (empty($products)): ?>
-            <div class="text-center py-24 glass-card rounded-3xl max-w-3xl mx-auto">
-                <div class="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                    <i class="fa-solid fa-box-open text-3xl text-slate-500"></i>
-                </div>
-                <h3 class="text-2xl font-medium text-white">No products found</h3>
-                <p class="text-slate-400 mt-2 max-w-md mx-auto">Our inventory is currently being updated. Please check back later for new arrivals.</p>
-            </div>
-        <?php else: ?>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8">
-                <?php foreach ($products as $product): ?>
-                    <div class="glass-card rounded-2xl overflow-hidden flex flex-col relative group">
-                        <!-- Category Badge & Wishlist -->
-                        <div class="absolute top-4 left-4 right-4 z-10 flex justify-between items-start">
-                            <span class="bg-slate-900/60 backdrop-blur-md text-slate-200 text-xs font-medium px-3 py-1.5 rounded-full border border-slate-700/50">
-                                <?= htmlspecialchars($product['category']) ?>
-                            </span>
-                            <button class="w-8 h-8 rounded-full bg-slate-900/60 backdrop-blur-md flex items-center justify-center text-slate-400 hover:text-rose-500 hover:bg-slate-800 transition-all border border-slate-700/50">
-                                <i class="fa-regular fa-heart"></i>
-                            </button>
-                        </div>
-                        
-                        <!-- Image -->
-                        <a href="product_details.php?id=<?= $product['id'] ?>" class="block image-container h-64 w-full relative bg-slate-800 flex items-center justify-center p-4 group-hover:opacity-90 transition-opacity">
-                            <!-- Using picsum for diverse placeholders -->
-                            <img src="https://picsum.photos/seed/<?= $product['id'] ?>/600/600" alt="<?= htmlspecialchars($product['name']) ?>" class="max-h-full max-w-full object-contain drop-shadow-2xl">
-                            
-                            <!-- Gradient Overlay -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent opacity-80"></div>
-                        </a>
-
-                        <!-- Content -->
-                        <div class="p-5 flex-grow flex flex-col -mt-4 relative z-10">
-                            <h3 class="text-lg font-semibold text-white mb-2 line-clamp-2 leading-snug group-hover:text-indigo-300 transition-colors">
-                                <?= htmlspecialchars($product['name']) ?>
-                            </h3>
-                            
-                            <!-- Rating -->
-                            <div class="flex items-center space-x-1 mb-4">
-                                <?php $rating = rand(4, 5); for($i=0; $i<5; $i++): ?>
-                                    <i class="fa-solid fa-star text-[10px] <?= $i < $rating ? 'text-amber-400' : 'text-slate-600' ?>"></i>
-                                <?php endfor; ?>
-                                <span class="text-xs text-slate-400 font-medium ml-1.5">(<?= rand(12, 120) ?> reviews)</span>
-                            </div>
-                            
-                            <div class="mt-auto flex items-center justify-between pt-4 border-t border-slate-700/50">
-                                <div>
-                                    <p class="text-[10px] uppercase tracking-wider text-slate-400 mb-0.5 font-medium">Price</p>
-                                    <p class="text-xl font-bold text-white flex items-baseline gap-1">
-                                        <span class="text-sm text-indigo-400">$</span><?= number_format($product['selling_price'], 2) ?>
-                                    </p>
-                                </div>
-                                <button class="add-to-cart-btn btn-gradient text-white text-sm font-medium px-4 py-2 rounded-xl flex items-center space-x-2 shadow-lg shadow-indigo-500/20 group/btn" data-id="<?= $product['id'] ?>" data-price="<?= $product['selling_price'] ?>">
-                                    <span>Add</span>
-                                    <i class="fa-solid fa-cart-plus group-hover/btn:scale-110 transition-transform"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-    </main>
-
-    <!-- Footer -->
+<!-- Footer -->
     <footer class="border-t border-slate-800/60 bg-slate-900/80 backdrop-blur-xl mt-12 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
