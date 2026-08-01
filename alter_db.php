@@ -1,8 +1,8 @@
 <?php
 require_once 'config/db.php';
 try {
-    $pdo->exec("ALTER TABLE users ADD COLUMN password VARCHAR(255) NULL AFTER email");
-    echo "Column added.";
+    $pdo->exec("ALTER TABLE products ADD COLUMN discount_percentage INT DEFAULT 0 AFTER selling_price");
+    echo "Column discount_percentage added.";
 } catch (PDOException $e) {
     echo "Error (or column exists): " . $e->getMessage();
 }

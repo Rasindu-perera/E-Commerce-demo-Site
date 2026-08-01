@@ -2,6 +2,11 @@
 session_start();
 require_once 'config/db.php';
 
+// Auto-migrate discount_percentage column if missing
+try {
+    $pdo->exec("ALTER TABLE products ADD COLUMN discount_percentage INT DEFAULT 0 AFTER selling_price");
+} catch (PDOException $e) {}
+
 $search = $_GET['search'] ?? '';
 $category = $_GET['category'] ?? '';
 $sort = $_GET['sort'] ?? 'latest';
