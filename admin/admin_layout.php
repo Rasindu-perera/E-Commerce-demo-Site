@@ -78,17 +78,17 @@ $activeMenu = $activeMenu ?? "overview";
                 <span class="font-medium">Products</span>
             </a>
             
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl transition-all <?= $activeMenu === 'customers' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-inner' : 'text-slate-400 hover:text-white hover:bg-slate-800/80 group' ?>">
+            <a href="admin_customers.php" class="flex items-center space-x-3 px-4 py-3 rounded-xl transition-all <?= $activeMenu === 'customers' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-inner' : 'text-slate-400 hover:text-white hover:bg-slate-800/80 group' ?>">
                 <i class="fa-solid fa-users <?= $activeMenu === 'customers' ? '' : 'group-hover:text-indigo-400 transition-colors' ?>"></i>
                 <span class="font-medium">Customers</span>
             </a>
             
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl transition-all <?= $activeMenu === 'orders' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-inner' : 'text-slate-400 hover:text-white hover:bg-slate-800/80 group' ?>">
+            <a href="admin_orders.php" class="flex items-center space-x-3 px-4 py-3 rounded-xl transition-all <?= $activeMenu === 'orders' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-inner' : 'text-slate-400 hover:text-white hover:bg-slate-800/80 group' ?>">
                 <i class="fa-solid fa-cart-shopping <?= $activeMenu === 'orders' ? '' : 'group-hover:text-indigo-400 transition-colors' ?>"></i>
                 <span class="font-medium">Orders</span>
             </a>
             
-            <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl transition-all <?= $activeMenu === 'reports' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-inner' : 'text-slate-400 hover:text-white hover:bg-slate-800/80 group' ?>">
+            <a href="admin_reports.php" class="flex items-center space-x-3 px-4 py-3 rounded-xl transition-all <?= $activeMenu === 'reports' ? 'bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 shadow-inner' : 'text-slate-400 hover:text-white hover:bg-slate-800/80 group' ?>">
                 <i class="fa-solid fa-chart-pie <?= $activeMenu === 'reports' ? '' : 'group-hover:text-indigo-400 transition-colors' ?>"></i>
                 <span class="font-medium">Reports</span>
             </a>
