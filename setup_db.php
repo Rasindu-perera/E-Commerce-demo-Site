@@ -1,8 +1,8 @@
 <?php
 // 1. Database Connection Settings
-$host = 'localhost';
-$user = 'root'; // ඔයාගේ db username එක
-$pass = '';     // ඔයාගේ db password එක
+$host = 'sql211.infinityfree.com';
+$user = 'if0_42550509'; // ඔයාගේ db username එක
+$pass = 'JLJ0Hue22Z';     // ඔයාගේ db password එක
 $charset = 'utf8mb4';
 
 try {
