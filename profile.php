@@ -72,53 +72,50 @@ $orders = $orderStmt->fetchAll();
 <body class="antialiased min-h-screen flex flex-col selection:bg-indigo-500/30">
 
     <!-- Navigation Bar -->
-    <nav class="glass-nav fixed w-full z-50 top-0 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-20">
-                <div class="flex-shrink-0 flex items-center cursor-pointer group">
+    <nav class="sticky top-0 z-50 backdrop-blur-md bg-slate-900/80 border-b border-slate-700 w-full transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-4">
+            <div class="flex justify-between items-center">
+                
+                <!-- Left: Logo -->
+                <div class="flex-shrink-0 flex items-center cursor-pointer group" onclick="window.location.href='index.php'">
                     <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mr-3 shadow-lg shadow-indigo-500/20 group-hover:shadow-indigo-500/40 transition-all duration-300">
                         <i class="fa-solid fa-store text-white text-lg"></i>
                     </div>
                     <span class="font-bold text-2xl tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">KWRmart</span>
                 </div>
                 
-                <div class="hidden md:block">
-                    <div class="ml-10 flex items-baseline space-x-8">
-                        <a href="index.php" class="text-white relative group px-1 py-2 text-sm font-medium">
-                            Home
-                            <span class="absolute -bottom-1 left-0 w-full h-0.5 bg-indigo-500 rounded-full"></span>
-                        </a>
-                        <a href="products.php" class="text-slate-400 hover:text-white transition-colors relative group px-1 py-2 text-sm font-medium">
-                            Products
-                            <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-indigo-500 rounded-full transition-all group-hover:w-full"></span>
-                        </a>
-                    </div>
+                <!-- Center: Links -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.php" class="text-white border-b-2 border-indigo-500 pb-1 text-sm font-medium hover:text-indigo-400 transition-colors">Home</a>
+                    <a href="products.php" class="text-slate-400 border-b-2 border-transparent pb-1 hover:border-indigo-500 hover:text-indigo-400 text-sm font-medium transition-all duration-300">Products</a>
                 </div>
 
+                <!-- Right: Actions -->
                 <div class="flex items-center space-x-4">
                     
                     <?php if (!isset($_SESSION['user_id'])): ?>
                         <div class="hidden sm:flex items-center space-x-4">
-                            <a href="login.php" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">Login</a>
+                            <a href="login.php" class="text-slate-400 hover:text-indigo-400 transition-colors text-sm font-medium">Login</a>
                             <a href="register.php" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-lg shadow-indigo-500/20">Register</a>
                         </div>
                     <?php else: ?>
-                        <div class="hidden sm:flex items-center space-x-4 border-r border-slate-700/50 pr-4">
+                        <div class="hidden sm:flex items-center space-x-4 pr-4 border-r border-slate-700/50">
                             <a href="profile.php" class="text-slate-300 text-sm hover:text-indigo-400 transition-colors">Hi, <span class="font-semibold text-white"><?= htmlspecialchars($_SESSION['first_name'] ?? 'User') ?></span></a>
                             <a href="logout.php" class="text-slate-400 hover:text-rose-400 transition-colors" title="Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
                         </div>
                     <?php endif; ?>
 
                     <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true): ?>
-                        <a href="admin/dashboard.php" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors shadow-lg shadow-indigo-500/20 flex items-center">
+                        <a href="admin/dashboard.php" class="bg-indigo-500/20 text-indigo-300 hover:bg-indigo-500/30 border border-indigo-500/50 rounded-lg px-4 py-2 text-sm font-medium transition-colors flex items-center">
                             <i class="fa-solid fa-chart-line mr-2"></i> Admin Dashboard
                         </a>
                     <?php endif; ?>
-                    <a href="cart.php" class="relative group block">
-                        <div class="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-700 border border-slate-700/50 rounded-full px-5 py-2.5 transition-all group-hover:border-indigo-500/50 shadow-sm">
+                    
+                    <a href="cart.php" class="relative group block ml-2">
+                        <div class="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-700 border border-slate-700/50 rounded-full px-4 py-2.5 transition-all group-hover:border-indigo-500/50 shadow-sm relative">
                             <i class="fa-solid fa-cart-shopping text-slate-300 group-hover:text-white transition-colors"></i>
                             <span class="text-sm font-medium text-white hidden sm:block">Cart</span>
-                            <span class="absolute -top-1.5 -right-1.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-lg shadow-rose-500/30 border border-slate-900">0</span>
+                            <span class="absolute -top-1 -right-1 bg-gradient-to-r from-rose-500 to-pink-500 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full shadow-lg shadow-rose-500/30 border border-slate-900">0</span>
                         </div>
                     </a>
                 </div>
