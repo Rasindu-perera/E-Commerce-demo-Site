@@ -1,0 +1,10 @@
+RewriteEngine On
+RewriteBase /
+
+# 1. Allow access to existing files (e.g. images, css, admin panel, api)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# 2. Reroute all other requests to index.php passing the path as "route"
+RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
